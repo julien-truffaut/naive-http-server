@@ -1,7 +1,7 @@
 package io.shaka.http
 
 import org.scalatest.Spec
-import io.shaka.http.Http.{HttpHandler, http}
+import io.shaka.http.Http.http
 import io.shaka.http.Request.{GET, POST}
 import io.shaka.http.HttpHeader.USER_AGENT
 import io.shaka.http.Response.respond
