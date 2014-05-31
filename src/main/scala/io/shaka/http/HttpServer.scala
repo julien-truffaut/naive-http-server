@@ -34,5 +34,7 @@ class HttpServer(private val usePort:Int = 0) {
 }
 
 object HttpServer {
-  def apply(port: Int = 0) = new HttpServer(port)
+  def apply(): HttpServer = apply(0)
+  def apply(port: Int): HttpServer = new HttpServer(port)
+  def apply(handler: HttpHandler, port: Int = 0): HttpServer = apply(port).useHandler(handler)
 }
