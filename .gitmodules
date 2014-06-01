@@ -1,0 +1,3 @@
+[submodule "naive-http"]
+	path = naive-http
+	url = git://github.com/timt/naive-http.git
