@@ -16,7 +16,7 @@ libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "2.1.6" % "test"
 )
 
-unmanagedSourceDirectories in Compile += baseDirectory.value / "naive-http-server/src/main/scala"
+unmanagedSourceDirectories in Compile += baseDirectory.value / "naive-http/src/main/scala"
 
 pgpPassphrase := Some(Try(sys.env("SECRET")).getOrElse("goaway").toCharArray)
 
