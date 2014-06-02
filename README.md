@@ -16,11 +16,17 @@ Add the following lines to your build.sbt
 
     libraryDependencies += "io.shaka" %% "naive-http-server" % "5"
 
+Starting a server
+
     import io.shaka.http.HttpServer
     val httpServer = HttpServer(request => respond("Hello World!")).start()
+    ...
+    val httpServer = HttpServer(8080).handler(request => repsond("Hello World!)).start()
+
+Stopping the server
+
     httpServer.stop()
 
-    HttpServer(8080).handler(request => repsond("Hello World!)).start()
 
 For more examples see [HttpServerSpec.scala](https://github.com/timt/naive-http-server/blob/master/src/test/scala/io/shaka/http/HttpServerSpec.scala)
 
