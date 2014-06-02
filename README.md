@@ -20,7 +20,7 @@ Add the following lines to your build.sbt
     val httpServer = HttpServer(request => respond("Hello World!")).start()
     httpServer.stop()
 
-    HttpServer(8080).useHandler(request => repsond("Hello World!)).start()
+    HttpServer(8080).handler(request => repsond("Hello World!)).start()
 
 For more examples see [HttpServerSpec.scala](https://github.com/timt/naive-http-server/blob/master/src/test/scala/io/shaka/http/HttpServerSpec.scala)
 

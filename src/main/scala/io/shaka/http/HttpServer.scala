@@ -25,7 +25,7 @@ class HttpServer(private val usePort:Int = 0) {
 
   def port() = server.getAddress.getPort
 
-  def useHandler(handler: HttpHandler) = {
+  def handler(handler: HttpHandler) = {
     server.removeContext("/")
     server.createContext("/", new SunHttpHandlerAdapter(handler))
     this
@@ -36,5 +36,5 @@ class HttpServer(private val usePort:Int = 0) {
 object HttpServer {
   def apply(): HttpServer = apply(0)
   def apply(port: Int): HttpServer = new HttpServer(port)
-  def apply(handler: HttpHandler, port: Int = 0): HttpServer = apply(port).useHandler(handler)
+  def apply(handler: HttpHandler, port: Int = 0): HttpServer = apply(port).handler(handler)
 }
