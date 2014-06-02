@@ -14,9 +14,10 @@ class HttpServer(private val usePort:Int = 0) {
   server.createContext("/", new SunHttpHandlerAdapter((req) => respond("No handler defined!").status(NOT_FOUND)))
 
   def start() = {
-    val startedAt = System.currentTimeMillis()
+    val startedAt = System.nanoTime()
     server.start()
-    println(s"naive-http-server started on port ${port()} in ${System.currentTimeMillis() - startedAt} milli seconds")
+    val elapsedTime = BigDecimal((System.nanoTime() - startedAt) / 1000000.0).formatted("%.2f")
+    println(s"naive-http-server started on port ${port()} in $elapsedTime milli seconds")
     this
   }
 
