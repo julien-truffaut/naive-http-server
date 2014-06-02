@@ -3,13 +3,15 @@ package io.shaka.http
 import java.net.InetSocketAddress
 import com.sun.net.httpserver.{HttpServer => SunHttpServer}
 import io.shaka.http.Http.HttpHandler
+import Response.respond
+import Status.NOT_FOUND
 
 
 class HttpServer(private val usePort:Int = 0) {
 
   val server =  SunHttpServer.create(new InetSocketAddress(usePort), 0)
   server.setExecutor(null)
-  server.createContext("/", new SunHttpHandlerAdapter((req) => Response(entity = Some(Entity("No handler defined!")))))
+  server.createContext("/", new SunHttpHandlerAdapter((req) => respond("No handler defined!").status(NOT_FOUND)))
 
   def start() = {
     val startedAt = System.currentTimeMillis()
