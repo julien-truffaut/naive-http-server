@@ -2,10 +2,12 @@ package io.shaka.http
 
 import org.scalatest.Spec
 import io.shaka.http.Http.http
-import io.shaka.http.HttpHeader.USER_AGENT
+import io.shaka.http.HttpHeader.{CONTENT_TYPE, USER_AGENT}
 import io.shaka.http.Response.respond
 import io.shaka.http.Request.{POST, GET}
 import io.shaka.http.Status.NOT_FOUND
+import io.shaka.http.ContentType.APPLICATION_JSON
+import RequestMatching.&&
 
 
 class HttpServerSpec extends Spec {
@@ -58,6 +60,17 @@ class HttpServerSpec extends Spec {
     }
   }
 
+  def `match request on content type`() {
+    withHttpServer{ httpServer =>
+      httpServer.handler{
+        case GET(_) && ContentType(APPLICATION_JSON) => respond("""{"hello":"world"}""")
+      }
+      val response =  http(GET(s"http://localhost:${httpServer.port()}").contentType(APPLICATION_JSON))
+      assert(response.status === Status.OK)
+    }
+
+  }
+
   private def withHttpServer(testBlock: HttpServer => Unit){
     val httpServer = HttpServer().start()
     testBlock(httpServer)
@@ -65,6 +78,7 @@ class HttpServerSpec extends Spec {
   }
 
 }
+
 
 
 

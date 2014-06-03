@@ -22,11 +22,14 @@ Starting a server
     val httpServer = HttpServer(request => respond("Hello World!")).start()
     ...
     val httpServer = HttpServer(8080).handler(request => repsond("Hello World!)).start()
-    ...
+
+Handling requests
+
     httpServer.handler{
         case GET("/hello") => respond("Hello world")
         case GET(echoUrl) => respond(echoUrl)
         case request@POST("/some/restful/thing") => respond(...)
+        case GET(_) && ContentType(APPLICATION_JSON) => respond("""{"hello":"world"}""")
         case _ => respond("doh!").status(NOT_FOUND)
     }
 
