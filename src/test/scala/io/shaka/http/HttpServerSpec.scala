@@ -42,8 +42,7 @@ class HttpServerSpec extends Spec {
     withHttpServer{ httpServer =>
       val userAgent = "mytest-agent"
       httpServer.handler{case req@GET(_) => {
-        assert(req.headers.contains(USER_AGENT))
-        assert(req.headers(USER_AGENT).head === userAgent)
+        assert(req.headers.contains(USER_AGENT, userAgent))
         respond("Hello world")
       }}
       http(GET(s"http://localhost:${httpServer.port()}").header(USER_AGENT, userAgent))
@@ -55,8 +54,7 @@ class HttpServerSpec extends Spec {
       val userAgent = "mytest-agent"
       httpServer.handler{ case GET(_) => respond("Hello world").header(USER_AGENT, userAgent) }
       val response =  http(GET(s"http://localhost:${httpServer.port()}"))
-      assert(response.headers.contains(USER_AGENT))
-      assert(response.headers(USER_AGENT).head === userAgent)
+      assert(response.headers.contains(USER_AGENT, userAgent))
     }
   }
 
