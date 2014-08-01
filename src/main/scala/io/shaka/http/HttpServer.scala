@@ -1,11 +1,12 @@
 package io.shaka.http
 
 import java.net.InetSocketAddress
+
 import com.sun.net.httpserver.{HttpServer => SunHttpServer}
 import io.shaka.http.Http.HttpHandler
-import Response.respond
-import Status.NOT_FOUND
-import io.shaka.http.HttpHeader.{ACCEPT, CONTENT_TYPE}
+import io.shaka.http.HttpHeader.ACCEPT
+import io.shaka.http.Response.respond
+import io.shaka.http.Status.NOT_FOUND
 
 
 class HttpServer(private val usePort:Int = 0) {
