@@ -41,3 +41,12 @@ object HttpServer {
   def apply(port: Int): HttpServer = new HttpServer(port)
   def apply(handler: HttpHandler, port: Int = 0): HttpServer = apply(port).handler(handler)
 }
+
+object Path {
+  def unapply(path: String): Option[List[scala.Predef.String]] = Some(path.split("/").toList match {
+    case "" :: xs => xs
+    case x => x
+  })
+}
+
+
