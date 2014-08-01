@@ -5,6 +5,7 @@ import com.sun.net.httpserver.{HttpServer => SunHttpServer}
 import io.shaka.http.Http.HttpHandler
 import Response.respond
 import Status.NOT_FOUND
+import io.shaka.http.HttpHeader.{ACCEPT, CONTENT_TYPE}
 
 
 class HttpServer(private val usePort:Int = 0) {
@@ -49,4 +50,6 @@ object Path {
   })
 }
 
-
+object Accept {
+  def unapply(request: Request) = if (request.headers.contains(ACCEPT)) request.headers(ACCEPT).headOption.map(ContentType.contentType) else None
+}

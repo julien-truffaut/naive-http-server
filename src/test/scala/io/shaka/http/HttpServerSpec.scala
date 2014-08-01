@@ -1,6 +1,6 @@
 package io.shaka.http
 
-import io.shaka.http.ContentType.APPLICATION_JSON
+import io.shaka.http.ContentType.{APPLICATION_XML, APPLICATION_JSON}
 import io.shaka.http.Http.http
 import io.shaka.http.HttpHeader.USER_AGENT
 import io.shaka.http.Request.{GET, POST}
@@ -58,13 +58,14 @@ class HttpServerSpec extends Spec {
     }
   }
 
-  def `match request on content type`() {
+  def `can do content negotiation`() {
     withHttpServer{ httpServer =>
       httpServer.handler{
-        case GET(_) && ContentType(APPLICATION_JSON) => respond("""{"hello":"world"}""")
+        case GET(_) && Accept(APPLICATION_JSON) => respond("""{"hello":"world"}""").contentType(APPLICATION_JSON)
+        case GET(_) && Accept(APPLICATION_XML) => respond("""<hello>world</hello>""").contentType(APPLICATION_XML)
       }
-      val response =  http(GET(s"http://localhost:${httpServer.port()}").contentType(APPLICATION_JSON))
-      assert(response.status === Status.OK)
+      assert(http(GET(s"http://localhost:${httpServer.port()}").accept(APPLICATION_JSON)).entityAsString === """{"hello":"world"}""")
+      assert(http(GET(s"http://localhost:${httpServer.port()}").accept(APPLICATION_XML)).entityAsString === """<hello>world</hello>""")
     }
   }
 

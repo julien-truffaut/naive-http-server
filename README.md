@@ -29,7 +29,7 @@ Handling requests
         case GET("/hello") => respond("Hello world")
         case GET(echoUrl) => respond(echoUrl)
         case request@POST("/some/restful/thing") => respond(...)
-        case GET(_) && ContentType(APPLICATION_JSON) => respond("""{"hello":"world"}""")
+        case GET(_) && Accept(APPLICATION_JSON) => respond("""{"hello":"world"}""").contentType(APPLICATION_JSON)
         case _ => respond("doh!").status(NOT_FOUND)
     }
 
