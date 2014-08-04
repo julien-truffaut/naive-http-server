@@ -1,6 +1,6 @@
 package io.shaka.http
 
-import io.shaka.http.ContentType.{APPLICATION_XML, APPLICATION_JSON}
+import io.shaka.http.ContentType.{APPLICATION_JSON, APPLICATION_XML}
 import io.shaka.http.Http.http
 import io.shaka.http.HttpHeader.USER_AGENT
 import io.shaka.http.Request.{GET, POST}
@@ -70,9 +70,10 @@ class HttpServerSpec extends Spec {
   }
 
   def `can extract path parameters`(){
+    import io.shaka.http.HttpServer._
     withHttpServer{ httpServer =>
       httpServer.handler{
-        case GET(Path("tickets" :: ticketId :: "messages" :: messageId :: Nil)) =>
+        case GET(url"/tickets/$ticketId/messages/$messageId") =>
           assert(ticketId === "12")
           assert(messageId === "5")
           respond("""{"hello":"world"}""")
