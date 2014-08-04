@@ -14,14 +14,15 @@ Add the following lines to your build.sbt
 
     resolvers += "Tim Tennant's repo" at "http://dl.bintray.com/timt/repo/"
 
-    libraryDependencies += "io.shaka" %% "naive-http-server" % "15"
+    libraryDependencies += "io.shaka" %% "naive-http-server" % "16"
 
 Starting a server
 
     import io.shaka.http.HttpServer
+    import io.shaka.http.Response.respond
     val httpServer = HttpServer(request => respond("Hello World!")).start()
     ...
-    val httpServer = HttpServer(8080).handler(request => repsond("Hello World!)).start()
+    val httpServer = HttpServer(8080).handler(request => respond("Hello World!")).start()
 
 Handling requests
 
