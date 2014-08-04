@@ -14,7 +14,7 @@ Add the following lines to your build.sbt
 
     resolvers += "Tim Tennant's repo" at "http://dl.bintray.com/timt/repo/"
 
-    libraryDependencies += "io.shaka" %% "naive-http-server" % "13"
+    libraryDependencies += "io.shaka" %% "naive-http-server" % "15"
 
 Starting a server
 
@@ -25,13 +25,13 @@ Starting a server
 
 Handling requests
 
-    import io.shaka.http.HttpServer.HttpStringContext
+    import io.shaka.http.RequestMatching._
     httpServer.handler{
         case GET("/hello") => respond("Hello world")
         case GET(echoUrl) => respond(echoUrl)
         case request@POST("/some/restful/thing") => respond(...)
         case GET(_) && Accept(APPLICATION_JSON) => respond("""{"hello":"world"}""").contentType(APPLICATION_JSON)
-        case GET(url"/tickets/$ticketId?messageContains=$messageContains") => respond(s"Ticket $ticketId, messageContains $messageContains").contentType(TEXT_PL¡AIN)
+        case GET(url"/tickets/$ticketId?messageContains=$messageContains") => respond(s"Ticket $ticketId, messageContains $messageContains").contentType(TEXT_PLAIN)
         case _ => respond("doh!").status(NOT_FOUND)
     }
 

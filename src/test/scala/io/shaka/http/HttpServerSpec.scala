@@ -4,7 +4,7 @@ import io.shaka.http.ContentType.{APPLICATION_JSON, APPLICATION_XML}
 import io.shaka.http.Http.http
 import io.shaka.http.HttpHeader.USER_AGENT
 import io.shaka.http.Request.{GET, POST}
-import io.shaka.http.RequestMatching.&&
+import io.shaka.http.RequestMatching.{&&, Accept}
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
 import org.scalatest.Spec
@@ -70,7 +70,7 @@ class HttpServerSpec extends Spec {
   }
 
   def `can extract path parameters`(){
-    import io.shaka.http.HttpServer.HttpStringContext
+    import io.shaka.http.RequestMatching._
     withHttpServer{ httpServer =>
       httpServer.handler{
         case GET(url"/tickets/$ticketId?messageContains=$messageContains") =>

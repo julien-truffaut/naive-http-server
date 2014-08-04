@@ -4,7 +4,6 @@ import java.net.InetSocketAddress
 
 import com.sun.net.httpserver.{HttpServer => SunHttpServer}
 import io.shaka.http.Http.HttpHandler
-import io.shaka.http.HttpHeader.ACCEPT
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
 
@@ -42,13 +41,5 @@ object HttpServer {
   def apply(): HttpServer = apply(0)
   def apply(port: Int): HttpServer = new HttpServer(port)
   def apply(handler: HttpHandler, port: Int = 0): HttpServer = apply(port).handler(handler)
-  implicit class HttpStringContext(val sc: StringContext) extends AnyVal {
-    def url = sc.parts.mkString("(.+)")
-      .replaceAllLiterally("?", "\\?")
-      .r
-  }
 }
 
-object Accept {
-  def unapply(request: Request) = if (request.headers.contains(ACCEPT)) request.headers(ACCEPT).headOption.map(ContentType.contentType) else None
-}
