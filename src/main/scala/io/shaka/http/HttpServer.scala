@@ -43,7 +43,9 @@ object HttpServer {
   def apply(port: Int): HttpServer = new HttpServer(port)
   def apply(handler: HttpHandler, port: Int = 0): HttpServer = apply(port).handler(handler)
   implicit class HttpStringContext(val sc: StringContext) extends AnyVal {
-    def url = sc.parts.mkString("(.+)").r
+    def url = sc.parts.mkString("(.+)")
+      .replaceAllLiterally("?", "\\?")
+      .r
   }
 }
 

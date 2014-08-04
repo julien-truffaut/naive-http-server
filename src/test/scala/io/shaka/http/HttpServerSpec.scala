@@ -70,15 +70,15 @@ class HttpServerSpec extends Spec {
   }
 
   def `can extract path parameters`(){
-    import io.shaka.http.HttpServer._
+    import io.shaka.http.HttpServer.HttpStringContext
     withHttpServer{ httpServer =>
       httpServer.handler{
-        case GET(url"/tickets/$ticketId/messages/$messageId") =>
+        case GET(url"/tickets/$ticketId?messageContains=$messageContains") =>
           assert(ticketId === "12")
-          assert(messageId === "5")
+          assert(messageContains === "foobar")
           respond("""{"hello":"world"}""")
       }
-      val response =  http(GET(s"http://localhost:${httpServer.port()}/tickets/12/messages/5"))
+      val response =  http(GET(s"http://localhost:${httpServer.port()}/tickets/12?messageContains=foobar"))
       assert(response.status === Status.OK)
     }
   }

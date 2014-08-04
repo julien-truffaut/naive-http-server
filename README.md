@@ -25,11 +25,13 @@ Starting a server
 
 Handling requests
 
+    import io.shaka.http.HttpServer.HttpStringContext
     httpServer.handler{
         case GET("/hello") => respond("Hello world")
         case GET(echoUrl) => respond(echoUrl)
         case request@POST("/some/restful/thing") => respond(...)
         case GET(_) && Accept(APPLICATION_JSON) => respond("""{"hello":"world"}""").contentType(APPLICATION_JSON)
+        case GET(url"/tickets/$ticketId?messageContains=$messageContains") => respond(s"Ticket $ticketId, messageContains $messageContains").contentType(TEXT_PL¡AIN)
         case _ => respond("doh!").status(NOT_FOUND)
     }
 
