@@ -3,29 +3,28 @@ package io.shaka.http
 import io.shaka.http.ContentType._
 import io.shaka.http.Http.http
 import io.shaka.http.HttpHeader.USER_AGENT
+import io.shaka.http.HttpServerSpecSupport.withHttpServer
 import io.shaka.http.Request.{GET, POST}
 import io.shaka.http.RequestMatching.{&&, Accept}
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
 import org.scalatest.Spec
 
-import scala.io.Source.fromFile
-
 
 class HttpServerSpec extends Spec {
 
   def `httpServer works`() {
     withHttpServer { httpServer =>
-        httpServer.handler(req => respond("Hello world"))
-        val response = http(GET(s"http://localhost:${httpServer.port()}"))
-        assert(response.status === Status.OK)
-        assert(response.entity.get.toString === "Hello world")
+      httpServer.handler(req => respond("Hello world"))
+      val response = http(GET(s"http://localhost:${httpServer.port()}"))
+      assert(response.status === Status.OK)
+      assert(response.entity.get.toString === "Hello world")
     }
   }
 
   def `httpServer receives GET method`() {
-    withHttpServer{ httpServer =>
-      httpServer.handler{
+    withHttpServer { httpServer =>
+      httpServer.handler {
         case req@GET(_) => respond("Hello world")
         case _ => respond("doh!").status(NOT_FOUND)
       }
@@ -34,16 +33,16 @@ class HttpServerSpec extends Spec {
   }
 
   def `httpServer receives POST method`() {
-    withHttpServer{ httpServer =>
-      httpServer.handler{ case POST(_) => respond("Hello world") }
+    withHttpServer { httpServer =>
+      httpServer.handler { case POST(_) => respond("Hello world")}
       http(POST(s"http://localhost:${httpServer.port()}"))
     }
   }
 
   def `httpServer receives headers`() {
-    withHttpServer{ httpServer =>
+    withHttpServer { httpServer =>
       val userAgent = "mytest-agent"
-      httpServer.handler{case req@GET(_) =>
+      httpServer.handler { case req@GET(_) =>
         assert(req.headers.contains(USER_AGENT, userAgent))
         respond("Hello world")
       }
@@ -52,60 +51,41 @@ class HttpServerSpec extends Spec {
   }
 
   def `httpServer sends headers`() {
-    withHttpServer{ httpServer =>
+    withHttpServer { httpServer =>
       val userAgent = "mytest-agent"
-      httpServer.handler{ case GET(_) => respond("Hello world").header(USER_AGENT, userAgent) }
-      val response =  http(GET(s"http://localhost:${httpServer.port()}"))
+      httpServer.handler { case GET(_) => respond("Hello world").header(USER_AGENT, userAgent)}
+      val response = http(GET(s"http://localhost:${httpServer.port()}"))
       assert(response.headers.contains(USER_AGENT, userAgent))
     }
   }
 
   def `can do content negotiation`() {
-    withHttpServer{ httpServer =>
-      httpServer.handler{
-        case GET(_) && Accept(APPLICATION_JSON) => respond("""{"hello":"world"}""").contentType(APPLICATION_JSON)
-        case GET(_) && Accept(APPLICATION_XML) => respond("""<hello>world</hello>""").contentType(APPLICATION_XML)
+    withHttpServer { httpServer =>
+      httpServer.handler {
+        case GET(_) && Accept(APPLICATION_JSON) => respond( """{"hello":"world"}""").contentType(APPLICATION_JSON)
+        case GET(_) && Accept(APPLICATION_XML) => respond( """<hello>world</hello>""").contentType(APPLICATION_XML)
       }
       assert(http(GET(s"http://localhost:${httpServer.port()}").accept(APPLICATION_JSON)).entityAsString === """{"hello":"world"}""")
       assert(http(GET(s"http://localhost:${httpServer.port()}").accept(APPLICATION_XML)).entityAsString === """<hello>world</hello>""")
     }
   }
 
-  def `can extract path parameters`(){
+  def `can extract path parameters`() {
     import io.shaka.http.RequestMatching._
-    withHttpServer{ httpServer =>
-      httpServer.handler{
+    withHttpServer { httpServer =>
+      httpServer.handler {
         case GET(url"/tickets/$ticketId?messageContains=$messageContains") =>
           assert(ticketId === "12")
           assert(messageContains === "foobar")
-          respond("""{"hello":"world"}""")
+          respond( """{"hello":"world"}""")
       }
-      val response =  http(GET(s"http://localhost:${httpServer.port()}/tickets/12?messageContains=foobar"))
+      val response = http(GET(s"http://localhost:${httpServer.port()}/tickets/12?messageContains=foobar"))
       assert(response.status === Status.OK)
     }
   }
-
-
-
-  def `can serve a static file from filesystem`() {
-    withHttpServer{ httpServer =>
-      import io.shaka.http.StaticResponse.static
-      val docRoot = "./src/test/scala"
-      httpServer.handler{
-        case GET(path) => static(docRoot, path)
-      }
-      val response = http(GET(s"http://localhost:${httpServer.port()}/io/shaka/http/test.html"))
-      assert(response.entityAsString === fromFile(s"$docRoot/io/shaka/http/test.html").mkString)
-    }
-  }
-
-  private def withHttpServer(testBlock: HttpServer => Unit){
-    val httpServer = HttpServer().start()
-    testBlock(httpServer)
-    httpServer.stop()
-  }
-
 }
+
+
 
 
 
