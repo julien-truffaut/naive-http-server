@@ -1,6 +1,6 @@
 package io.shaka.http
 
-import io.shaka.http.ContentType.{APPLICATION_JSON, APPLICATION_XML}
+import io.shaka.http.ContentType._
 import io.shaka.http.Http.http
 import io.shaka.http.HttpHeader.USER_AGENT
 import io.shaka.http.Request.{GET, POST}
@@ -8,6 +8,8 @@ import io.shaka.http.RequestMatching.{&&, Accept}
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
 import org.scalatest.Spec
+
+import scala.io.Source.fromFile
 
 
 class HttpServerSpec extends Spec {
@@ -83,6 +85,20 @@ class HttpServerSpec extends Spec {
     }
   }
 
+
+
+  def `can serve a static file from filesystem`() {
+    withHttpServer{ httpServer =>
+      import io.shaka.http.StaticResponse.static
+      val docRoot = "./src/test/scala"
+      httpServer.handler{
+        case GET(path) => static(docRoot, path)
+      }
+      val response = http(GET(s"http://localhost:${httpServer.port()}/io/shaka/http/test.html"))
+      assert(response.entityAsString === fromFile(s"$docRoot/io/shaka/http/test.html").mkString)
+    }
+  }
+
   private def withHttpServer(testBlock: HttpServer => Unit){
     val httpServer = HttpServer().start()
     testBlock(httpServer)
@@ -90,6 +106,8 @@ class HttpServerSpec extends Spec {
   }
 
 }
+
+
 
 
 
