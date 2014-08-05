@@ -1,9 +1,10 @@
 package io.shaka.http
 
 object HttpServerSpecSupport {
-  def withHttpServer(testBlock: HttpServer => Unit) {
+  type RootUrl = String
+  def withHttpServer(testBlock: (HttpServer, RootUrl) => Unit) {
     val httpServer = HttpServer().start()
-    testBlock(httpServer)
+    testBlock(httpServer, s"http://localhost:${httpServer.port()}")
     httpServer.stop()
   }
 }
