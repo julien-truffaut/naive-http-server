@@ -51,7 +51,13 @@ class ServingStaticResourcesSpec extends Spec{
   }
 
   def `shows directory listing when serving static resources`() {
-
+    withHttpServer{ (httpServer, rootUrl) =>
+      httpServer.handler{
+        case GET(path) => static(docRoot, path)
+      }
+      val response = http(GET(s"$rootUrl/io/shaka/http/testdir"))
+      assert(response.entityAsString === List("test.csv","test.txt","testsubdir").mkString("\n"))
+    }
   }
 
 
