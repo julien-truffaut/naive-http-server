@@ -56,7 +56,7 @@ class ServingStaticResourcesSpec extends Spec{
         case GET(path) => static(docRoot, path)
       }
       val response = http(GET(s"$rootUrl/io/shaka/http/testdir"))
-      assert(response.entityAsString === List("test.csv","test.txt","testsubdir").mkString("\n"))
+      assert(response.entityAsString.split("\n").sorted === List("test.csv","testsubdir","test.txt").sorted)
     }
   }
 }
