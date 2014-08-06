@@ -59,6 +59,4 @@ class ServingStaticResourcesSpec extends Spec{
       assert(response.entityAsString === List("test.csv","test.txt","testsubdir").mkString("\n"))
     }
   }
-
-
 }

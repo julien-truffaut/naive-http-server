@@ -14,7 +14,7 @@ Add the following lines to your build.sbt
 
     resolvers += "Tim Tennant's repo" at "http://dl.bintray.com/timt/repo/"
 
-    libraryDependencies += "io.shaka" %% "naive-http-server" % "16"
+    libraryDependencies += "io.shaka" %% "naive-http-server" % "17"
 
 Starting a server
 
@@ -34,6 +34,13 @@ Handling requests
         case GET(_) && Accept(APPLICATION_JSON) => respond("""{"hello":"world"}""").contentType(APPLICATION_JSON)
         case GET(url"/tickets/$ticketId?messageContains=$messageContains") => respond(s"Ticket $ticketId, messageContains $messageContains").contentType(TEXT_PLAIN)
         case _ => respond("doh!").status(NOT_FOUND)
+    }
+    
+Serving static content
+    
+    import io.shaka.http.StaticResponse.static
+    httpServer.handler{
+        case GET(path) => static("/home/timt/docRoot", path)
     }
 
 
