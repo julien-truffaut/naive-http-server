@@ -55,13 +55,23 @@ class ServingStaticResourcesSpec extends Spec {
   }
 
 
-  def `can server a static file from the class path`() {
+  def `can server a static file from the (file:) classpath`() {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
         case GET(path) => static(classpathDocRoot("./web"), path)
       }
       val response = http(GET(s"$rootUrl/test.html"))
       assert(response.entityAsString === fromFile(s"$docRoot/test.html").mkString)
+    }
+  }
+
+  def `shows directory listing when serving static resources from (file:) classpath`() {
+    withHttpServer { (httpServer, rootUrl) =>
+      httpServer.handler {
+        case GET(path) => static(classpathDocRoot("./web"), path)
+      }
+      val response = http(GET(s"$rootUrl/testdir"))
+      assert(response.entityAsString.split("\n").sorted === List("test.csv", "testsubdir", "test.txt").sorted)
     }
   }
 

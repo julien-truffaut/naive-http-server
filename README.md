@@ -49,7 +49,10 @@ Stopping the server
     httpServer.stop()
 
 
-For more examples see [HttpServerSpec.scala](https://github.com/timt/naive-http-server/blob/master/src/test/scala/io/shaka/http/HttpServerSpec.scala)
+For more examples see
+    
+* [HttpServerSpec.scala](https://github.com/timt/naive-http-server/blob/master/src/test/scala/io/shaka/http/HttpServerSpec.scala)
+* [ServingStaticResourcesSpec.scala](https://github.com/timt/naive-http-server/blob/master/src/test/scala/io/shaka/http/ServingStaticResourcesSpec.scala)
 
 
 Code license
