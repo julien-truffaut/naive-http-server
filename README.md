@@ -14,7 +14,7 @@ Add the following lines to your build.sbt
 
     resolvers += "Tim Tennant's repo" at "http://dl.bintray.com/timt/repo/"
 
-    libraryDependencies += "io.shaka" %% "naive-http-server" % "20"
+    libraryDependencies += "io.shaka" %% "naive-http-server" % "21"
 
 Starting a server
 
