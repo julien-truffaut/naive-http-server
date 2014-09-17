@@ -17,4 +17,11 @@ object RequestMatching {
     def unapply(request: Request) = if (request.headers.contains(ACCEPT)) request.headers(ACCEPT).headOption.map(ContentType.contentType) else None
   }
 
+  object Path {
+    def unapply(path: String): Option[List[String]] = Some(path.split("/").toList match {
+      case "" :: xs => xs
+      case x => x
+    })
+  }
+
 }
