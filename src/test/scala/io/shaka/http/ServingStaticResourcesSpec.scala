@@ -76,7 +76,13 @@ class ServingStaticResourcesSpec extends Spec {
   }
 
   def `can server a static file from a jar`() {
-
+    withHttpServer { (httpServer, rootUrl) =>
+      httpServer.handler {
+        case GET(path) => static(classpathDocRoot("docroot"), path)
+      }
+      val response = http(GET(s"$rootUrl/index.html"))
+      assert(response.entityAsString === "<html>\n<body>\n<h1>Hellow world</h1>\n</body>\n</html>")
+    }
   }
 
 }

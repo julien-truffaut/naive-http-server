@@ -7,6 +7,7 @@ import io.shaka.http.ContentType._
 import io.shaka.http.Response._
 import io.shaka.http.Status.NOT_FOUND
 
+import scala.io.Source
 import scala.io.Source._
 
 object StaticResponse {
@@ -22,8 +23,9 @@ object StaticResponse {
 
   def static(docRoot: ClasspathDocRoot, path: String): Response = static(this.getClass.getClassLoader.getResource(docRoot()), path)
 
-  def static(docRoot: URL, path: String): Response = docRoot.getProtocol match {
+  private def static(docRoot: URL, path: String): Response = docRoot.getProtocol match {
     case "file" => static(docRoot.getPath, path)
+    case "jar" => respond(Source.fromURL(s"${docRoot}$path").mkString).contentType(toContentType(path))
     case protocol => respond(s"Doesn't currently support protocol $protocol")
   }
 
