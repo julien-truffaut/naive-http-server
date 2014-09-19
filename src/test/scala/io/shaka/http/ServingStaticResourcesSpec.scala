@@ -1,19 +1,23 @@
 package io.shaka.http
 
+import java.awt.image.DataBufferByte
+import java.io.File
+import javax.imageio.ImageIO._
+
 import io.shaka.http.ContentType.{TEXT_CSS, TEXT_CSV, TEXT_HTML}
 import io.shaka.http.Http._
 import io.shaka.http.HttpServerSpecSupport.withHttpServer
 import io.shaka.http.Request.GET
 import io.shaka.http.StaticResponse.{classpathDocRoot, static}
 import io.shaka.http.Status.NOT_FOUND
-import org.scalatest.Spec
+import org.scalatest.FunSuite
 
 import scala.io.Source._
 
-class ServingStaticResourcesSpec extends Spec {
+class ServingStaticResourcesSpec extends FunSuite {
   val docRoot = "./src/test/resources/web"
 
-  def `can serve a static file from filesystem`() {
+  test("can serve a static file from filesystem") {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
         case GET(path) => static(docRoot, path)
@@ -23,7 +27,19 @@ class ServingStaticResourcesSpec extends Spec {
     }
   }
 
-  def `return NOT_FOUND when static resource does not exist`() {
+  test("can serve image file from filesystem"){
+    withHttpServer { (httpServer, rootUrl) =>
+      httpServer.handler {
+        case GET(path) => static(docRoot, path)
+      }
+      val response = http(GET(s"$rootUrl/clocks.png"))
+      assert(response.entity.get.content === read(new File(s"$docRoot/clocks.png")).getData.getDataBuffer.asInstanceOf[DataBufferByte].getData)
+    }
+  }
+
+  //  test("can serve pdf file from filesystem"){
+
+  test("return NOT_FOUND when static resource does not exist") {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
         case GET(path) => static(docRoot, path)
@@ -33,7 +49,7 @@ class ServingStaticResourcesSpec extends Spec {
 
   }
 
-  def `correctly set content-type when serving static files`() {
+  test("correctly set content-type when serving static files") {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
         case GET(path) => static(docRoot, path)
@@ -44,7 +60,7 @@ class ServingStaticResourcesSpec extends Spec {
     }
   }
 
-  def `shows directory listing when serving static resources`() {
+  test("shows directory listing when serving static resources") {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
         case GET(path) => static(docRoot, path)
@@ -54,8 +70,7 @@ class ServingStaticResourcesSpec extends Spec {
     }
   }
 
-
-  def `can server a static file from the (file:) classpath`() {
+  test("can server a static file from the (file:) classpath") {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
         case GET(path) => static(classpathDocRoot("web"), path)
@@ -65,7 +80,7 @@ class ServingStaticResourcesSpec extends Spec {
     }
   }
 
-  def `shows directory listing when serving static resources from (file:) classpath`() {
+  test("shows directory listing when serving static resources from (file:) classpath") {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
         case GET(path) => static(classpathDocRoot("web"), path)
@@ -75,7 +90,7 @@ class ServingStaticResourcesSpec extends Spec {
     }
   }
 
-  def `can server a static file from a jar`() {
+  test("can server a static file from a jar") {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
         case GET(path) => static(classpathDocRoot("docroot"), path)
