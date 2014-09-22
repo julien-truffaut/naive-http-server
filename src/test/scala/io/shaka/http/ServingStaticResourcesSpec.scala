@@ -77,7 +77,7 @@ class ServingStaticResourcesSpec extends FunSuite {
     }
   }
 
-  test("can server a static file from the (file:) classpath") {
+  test("can serve a static file from the (file:) classpath") {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
         case GET(path) => static(classpathDocRoot("web"), path)
@@ -97,13 +97,23 @@ class ServingStaticResourcesSpec extends FunSuite {
     }
   }
 
-  test("can server a static file from a jar") {
+  test("can serve a html file from a jar") {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
-        case GET(path) => static(classpathDocRoot("docroot"), path)
+        case GET(path) => static(classpathDocRoot("org/shaka/docroot"), path)
       }
-      val response = http(GET(s"$rootUrl/index.html"))
-      assert(response.entityAsString === "<html>\n<body>\n<h1>Hellow world</h1>\n</body>\n</html>")
+      val response = http(GET(s"$rootUrl/test.html"))
+      assert(response.entityAsString === fromFile(s"$docRoot/test.html").mkString)
+    }
+  }
+
+  test("can serve a image from a jar") {
+    withHttpServer { (httpServer, rootUrl) =>
+      httpServer.handler {
+        case GET(path) => static(classpathDocRoot("org/shaka/docroot"), path)
+      }
+      val response = http(GET(s"$rootUrl/clocks.png"))
+      assert(response.entity.get.content === readAllBytes(new File(s"$docRoot/clocks.png").toPath))
     }
   }
 

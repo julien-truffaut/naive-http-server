@@ -8,8 +8,6 @@ import io.shaka.http.ContentType._
 import io.shaka.http.Response._
 import io.shaka.http.Status.NOT_FOUND
 
-import scala.io.Source
-
 object StaticResponse {
   type ClasspathDocRoot = Unit => String
 
@@ -27,8 +25,15 @@ object StaticResponse {
 
   private def staticFromClasspath(docRoot: URL, path: String): Response = docRoot.getProtocol match {
     case "file" => static(docRoot.getPath, path)
-    case "jar" => respond(Source.fromURL(s"${docRoot}$path").mkString).contentType(toContentType(path))
+    case "jar" => respond(urlToInputStream(s"${docRoot}$path")).contentType(toContentType(path))
     case protocol => respond(s"Doesn't currently support protocol $protocol")
+  }
+
+  def urlToInputStream(url: String) = {
+    val is = new URL(url).openStream()
+    val bytes = Iterator.continually(is.read()).takeWhile(_ != -1).map(_.toByte).toArray
+    is.close()
+    bytes
   }
 
   private val fileExtensionToContentType = Map(
