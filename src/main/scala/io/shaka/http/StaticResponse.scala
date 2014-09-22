@@ -23,13 +23,9 @@ object StaticResponse {
 
   def classpathDocRoot(docRoot: String): ClasspathDocRoot = unit => docRoot
 
-  private def staticFromClasspath(docRoot: URL, path: String): Response = docRoot.getProtocol match {
-    case "file" => static(docRoot.getPath, path)
-    case "jar" => respond(urlToInputStream(s"${docRoot}$path")).contentType(toContentType(path))
-    case protocol => respond(s"Doesn't currently support protocol $protocol")
-  }
+  private def staticFromClasspath(docRoot: URL, path: String): Response = respond(urlToBytes(s"${docRoot}$path")).contentType(toContentType(path))
 
-  def urlToInputStream(url: String) = {
+  def urlToBytes(url: String) = {
     val is = new URL(url).openStream()
     val bytes = Iterator.continually(is.read()).takeWhile(_ != -1).map(_.toByte).toArray
     is.close()
