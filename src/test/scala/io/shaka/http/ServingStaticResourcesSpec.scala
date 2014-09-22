@@ -1,8 +1,7 @@
 package io.shaka.http
 
-import java.awt.image.DataBufferByte
 import java.io.File
-import javax.imageio.ImageIO._
+import java.nio.file.Files
 
 import io.shaka.http.ContentType.{TEXT_CSS, TEXT_CSV, TEXT_HTML}
 import io.shaka.http.Http._
@@ -33,7 +32,7 @@ class ServingStaticResourcesSpec extends FunSuite {
         case GET(path) => static(docRoot, path)
       }
       val response = http(GET(s"$rootUrl/clocks.png"))
-      assert(response.entity.get.content === read(new File(s"$docRoot/clocks.png")).getData.getDataBuffer.asInstanceOf[DataBufferByte].getData)
+      assert(response.entity.get.content === Files.readAllBytes(new File(s"$docRoot/clocks.png").toPath))
     }
   }
 
