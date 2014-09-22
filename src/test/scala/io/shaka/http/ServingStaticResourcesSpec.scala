@@ -1,7 +1,7 @@
 package io.shaka.http
 
 import java.io.File
-import java.nio.file.Files
+import java.nio.file.Files.readAllBytes
 
 import io.shaka.http.ContentType.{TEXT_CSS, TEXT_CSV, TEXT_HTML}
 import io.shaka.http.Http._
@@ -32,11 +32,19 @@ class ServingStaticResourcesSpec extends FunSuite {
         case GET(path) => static(docRoot, path)
       }
       val response = http(GET(s"$rootUrl/clocks.png"))
-      assert(response.entity.get.content === Files.readAllBytes(new File(s"$docRoot/clocks.png").toPath))
+      assert(response.entity.get.content === readAllBytes(new File(s"$docRoot/clocks.png").toPath))
     }
   }
 
-  //  test("can serve pdf file from filesystem"){
+  test("can serve pdf file from filesystem"){
+    withHttpServer { (httpServer, rootUrl) =>
+      httpServer.handler {
+        case GET(path) => static(docRoot, path)
+      }
+      val response = http(GET(s"$rootUrl/specification.pdf"))
+      assert(response.entity.get.content === readAllBytes(new File(s"$docRoot/specification.pdf").toPath))
+    }
+  }
 
   test("return NOT_FOUND when static resource does not exist") {
     withHttpServer { (httpServer, rootUrl) =>
