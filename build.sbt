@@ -1,6 +1,6 @@
-import scala.Some
-import scala.util.Try
 import bintray.Keys._
+
+import scala.util.Try
 
 name := "naive-http-server"
 
@@ -8,12 +8,12 @@ organization := "io.shaka"
 
 version := Try(sys.env("LIB_VERSION")).getOrElse("1")
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.2"
 
 crossScalaVersions := Seq("2.10.4", "2.11.2")
 
 libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "2.1.6" % "test"
+  "org.scalatest" %% "scalatest" % "2.2.0" % "test"
 )
 
 unmanagedSourceDirectories in Compile += baseDirectory.value / "naive-http/src/main/scala"
