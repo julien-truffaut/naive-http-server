@@ -7,7 +7,7 @@ object RequestMatching {
     def unapply[A](a: A) = Some((a, a))
   }
 
-  implicit class HttpStringContext(val sc: StringContext) extends AnyVal {
+  implicit class URLMatcher(val sc: StringContext) extends AnyVal {
     def url = sc.parts.mkString("(.+)")
       .replaceAllLiterally("?", "\\?")
       .r
