@@ -8,12 +8,11 @@ import io.shaka.http.Request.{GET, POST}
 import io.shaka.http.RequestMatching.{&&, Accept}
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
-import org.scalatest.Spec
+import org.scalatest.FunSuite
 
+class HttpServerSpec extends FunSuite {
 
-class HttpServerSpec extends Spec {
-
-  def `httpServer works`() {
+  test("httpServer works") {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler(req => respond("Hello world"))
       val response = http(GET(rootUrl))
@@ -22,7 +21,7 @@ class HttpServerSpec extends Spec {
     }
   }
 
-  def `httpServer receives GET method`() {
+  test("httpServer receives GET method") {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
         case req@GET(_) => respond("Hello world")
@@ -32,14 +31,14 @@ class HttpServerSpec extends Spec {
     }
   }
 
-  def `httpServer receives POST method`() {
+  test("httpServer receives POST method") {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler { case POST(_) => respond("Hello world")}
       http(POST(rootUrl))
     }
   }
 
-  def `httpServer receives headers`() {
+  test("httpServer receives headers") {
     withHttpServer { (httpServer, rootUrl) =>
       val userAgent = "mytest-agent"
       httpServer.handler { case req@GET(_) =>
@@ -50,7 +49,7 @@ class HttpServerSpec extends Spec {
     }
   }
 
-  def `httpServer sends headers`() {
+  test("httpServer sends headers") {
     withHttpServer { (httpServer, rootUrl) =>
       val userAgent = "mytest-agent"
       httpServer.handler { case GET(_) => respond("Hello world").header(USER_AGENT, userAgent)}
@@ -59,7 +58,7 @@ class HttpServerSpec extends Spec {
     }
   }
 
-  def `can do content negotiation`() {
+  test("can do content negotiation") {
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
         case GET(_) && Accept(APPLICATION_JSON) => respond( """{"hello":"world"}""").contentType(APPLICATION_JSON)
@@ -70,7 +69,7 @@ class HttpServerSpec extends Spec {
     }
   }
 
-  def `can extract path parameters`() {
+  test("can extract path parameters") {
     import io.shaka.http.RequestMatching._
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
@@ -83,6 +82,7 @@ class HttpServerSpec extends Spec {
       assert(response.status === Status.OK)
     }
   }
+
 }
 
 
