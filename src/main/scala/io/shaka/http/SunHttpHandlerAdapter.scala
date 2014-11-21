@@ -1,17 +1,26 @@
 package io.shaka.http
 
+import com.sun.net.httpserver.{HttpExchange => SunHttpExchange, HttpHandler => SunHttpHandler}
+import io.shaka.http.Headers._
 import io.shaka.http.Http.HttpHandler
 import io.shaka.http.Method._
-import io.shaka.http.Headers._
-import scala.Some
+import io.shaka.http.Status.INTERNAL_SERVER_ERROR
+
 import scala.io.Source
-import com.sun.net.httpserver.{HttpExchange => SunHttpExchange, HttpHandler => SunHttpHandler}
 
 
 class SunHttpHandlerAdapter(handler: HttpHandler) extends SunHttpHandler {
   override def handle(exchange: SunHttpExchange): Unit = {
-    respond(exchange, handler(request(exchange)))
+    respond(exchange, safely(handler(request(exchange))))
     exchange.close()
+  }
+
+  private def safely(block: => Response) = {
+    try{
+      block
+    }catch {
+      case e:Throwable => Response().entity(s"Server error: ${e.getMessage}").status(INTERNAL_SERVER_ERROR)
+    }
   }
 
   private def request(exchange: SunHttpExchange) = Request(

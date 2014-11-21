@@ -7,7 +7,7 @@ import io.shaka.http.HttpServerSpecSupport.withHttpServer
 import io.shaka.http.Request.{GET, POST}
 import io.shaka.http.RequestMatching.{&&, Accept}
 import io.shaka.http.Response.respond
-import io.shaka.http.Status.NOT_FOUND
+import io.shaka.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import org.scalatest.FunSuite
 
 class HttpServerSpec extends FunSuite {
@@ -83,6 +83,14 @@ class HttpServerSpec extends FunSuite {
     }
   }
 
+  test("report exceptions thrown in handler as INTERNAL_SERVER_ERROR's") {
+    withHttpServer { (httpServer, rootUrl) =>
+      httpServer.handler(_ => throw new RuntimeException("dish ish foobared!"))
+      val response = http(GET(s"$rootUrl/anything"))
+      assert(response.status === INTERNAL_SERVER_ERROR)
+      assert(response.entityAsString === "Server error: dish ish foobared!")
+    }
+  }
 }
 
 
