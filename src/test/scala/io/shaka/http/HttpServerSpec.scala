@@ -100,7 +100,7 @@ class HttpServerSpec extends FunSuite {
       val response = http(HEAD(rootUrl))
       assert(response.status === Status.OK)
       assert(response.entity === None)
-      assert(response.header(CONTENT_LENGTH) === Some(11.toString))
+      assert(response.header(CONTENT_LENGTH) === Some("Hello world".length.toString))
     }
   }
 }

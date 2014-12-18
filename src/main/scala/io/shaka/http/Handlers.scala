@@ -9,9 +9,13 @@ object Handlers {
 
   object HEADRequestHandler {
     def ~>(handler: HttpHandler): HttpHandler = (request) => {
-      val isHeadRequest = request.method == HEAD
-      val response = handler(if (isHeadRequest) request.copy(method = GET) else request)
-      if(isHeadRequest) response.header(CONTENT_LENGTH, response.entity.fold("0")(_.content.length.toString)) else response
+      def foldHeadRequest[T](original: T)(doWhenHead: T => T): T = {
+        if(request.method == HEAD) doWhenHead(original) else original
+      }
+      val response = handler(foldHeadRequest(request)(_.copy(method = GET)))
+      foldHeadRequest(response)(_.header(CONTENT_LENGTH, response.entity.fold("0")(_.content.length.toString)))
+
+
     }
   }
 
