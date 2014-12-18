@@ -2,9 +2,9 @@ package io.shaka.http
 
 import io.shaka.http.ContentType._
 import io.shaka.http.Http.http
-import io.shaka.http.HttpHeader.USER_AGENT
+import io.shaka.http.HttpHeader.{CONTENT_LENGTH, USER_AGENT}
 import io.shaka.http.HttpServerSpecSupport.withHttpServer
-import io.shaka.http.Request.{GET, POST}
+import io.shaka.http.Request.{GET, HEAD, POST}
 import io.shaka.http.RequestMatching.{&&, Accept}
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
@@ -89,6 +89,18 @@ class HttpServerSpec extends FunSuite {
       val response = http(GET(s"$rootUrl/anything"))
       assert(response.status === INTERNAL_SERVER_ERROR)
       assert(response.entityAsString === "Server error: dish ish foobared!")
+    }
+  }
+
+  test("head works") {
+    withHttpServer { (httpServer, rootUrl) =>
+      httpServer.handler {
+        case GET(_) => respond("Hello world")
+      }
+      val response = http(HEAD(rootUrl))
+      assert(response.status === Status.OK)
+      assert(response.entity === None)
+      assert(response.header(CONTENT_LENGTH) === Some(11.toString))
     }
   }
 }
