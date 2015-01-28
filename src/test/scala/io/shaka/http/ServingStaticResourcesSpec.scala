@@ -117,4 +117,14 @@ class ServingStaticResourcesSpec extends FunSuite {
     }
   }
 
+  test("return 404 NOT_FOUND when not static resource not found") {
+    withHttpServer { (httpServer, rootUrl) =>
+      httpServer.handler{
+        case GET(path) => static(classpathDocRoot("org/shaka/docroot"), path)
+      }
+      val response = http(GET(s"$rootUrl/thisDoesNotExist.html"))
+      assert(response.status === NOT_FOUND)
+    }
+  }
+
 }
