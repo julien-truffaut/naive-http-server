@@ -14,12 +14,13 @@ Add the following lines to your build.sbt
 
     resolvers += "Tim Tennant's repo" at "http://dl.bintray.com/timt/repo/"
 
-    libraryDenpendencies += "io.shaka" %% "naive-http-server" % "28"
+    libraryDenpendencies += "io.shaka" %% "naive-http-server" % "34"
 
 Starting a server
 
     import io.shaka.http.HttpServer
     import io.shaka.http.Response.respond
+    import io.shaka.http.Response.seeOther
     val httpServer = HttpServer(request => respond("Hello World!")).start()
     ...
     val httpServer = HttpServer(8080).handler(request => respond("Hello World!")).start()
@@ -33,12 +34,14 @@ Handling requests
         case request@POST("/some/restful/thing") => respond(...)
         case GET(_) && Accept(APPLICATION_JSON) => respond("""{"hello":"world"}""").contentType(APPLICATION_JSON)
         case GET(url"/tickets/$ticketId?messageContains=$messageContains") => respond(s"Ticket $ticketId, messageContains $messageContains").contentType(TEXT_PLAIN)
+        case GET("/nothingToSeeHere") => seeOther("http://moveAlong")
         case _ => respond("doh!").status(NOT_FOUND)
     }
     
 Serving static content
     
     import io.shaka.http.StaticResponse.static
+    import io.shaka.http.StaticResponse.classpathDocRoot
     httpServer.handler{
         case GET(path) => static("/home/timt/docRoot", path)
         case GET(path) => static(classpathDocRoot("web"), path)
