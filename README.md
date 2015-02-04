@@ -5,7 +5,7 @@ A really simple http server library implemented in scala with no dependencies
 Requirements
 ------------
 
-* [scala](http://www.scala-lang.org) 2.10.4
+* [scala](http://www.scala-lang.org) 2.10.5
 * [scala](http://www.scala-lang.org) 2.11.0
 
 Usage
@@ -14,7 +14,7 @@ Add the following lines to your build.sbt
 
     resolvers += "Tim Tennant's repo" at "http://dl.bintray.com/timt/repo/"
 
-    libraryDenpendencies += "io.shaka" %% "naive-http-server" % "35"
+    libraryDenpendencies += "io.shaka" %% "naive-http-server" % "37"
 
 Starting a server
 
