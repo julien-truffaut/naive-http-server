@@ -32,7 +32,7 @@ Handling requests
         case GET("/hello") => respond("Hello world")
         case GET(echoUrl) => respond(echoUrl)
         case request@POST("/some/restful/thing") => respond(...)
-        case GET(_) && Accept(APPLICATION_JSON) => respond("""{"hello":"world"}""").contentType(APPLICATION_JSON)
+        case req@GET(_) if req.accepts(APPLICATION_JSON) => respond("""{"hello":"world"}""").contentType(APPLICATION_JSON)
         case GET(url"/tickets/$ticketId?messageContains=$messageContains") => respond(s"Ticket $ticketId, messageContains $messageContains").contentType(TEXT_PLAIN)
         case GET("/nothingToSeeHere") => seeOther("http://moveAlong")
         case _ => respond("doh!").status(NOT_FOUND)

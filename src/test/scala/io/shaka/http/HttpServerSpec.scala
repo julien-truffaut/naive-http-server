@@ -5,7 +5,6 @@ import io.shaka.http.Http.http
 import io.shaka.http.HttpHeader.{CONTENT_LENGTH, USER_AGENT}
 import io.shaka.http.HttpServerSpecSupport.withHttpServer
 import io.shaka.http.Request.{GET, HEAD, POST}
-import io.shaka.http.RequestMatching.{&&, Accept}
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import org.scalatest.FunSuite
@@ -59,10 +58,11 @@ class HttpServerSpec extends FunSuite {
   }
 
   test("can do content negotiation") {
+    import io.shaka.http.RequestMatching.RequestOps
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
-        case GET(_) && Accept(APPLICATION_JSON) => respond( """{"hello":"world"}""").contentType(APPLICATION_JSON)
-        case GET(_) && Accept(APPLICATION_XML) => respond( """<hello>world</hello>""").contentType(APPLICATION_XML)
+        case req@GET(_) if req.accepts(APPLICATION_JSON) => respond( """{"hello":"world"}""").contentType(APPLICATION_JSON)
+        case req@GET(_) if req.accepts(APPLICATION_XML) => respond( """<hello>world</hello>""").contentType(APPLICATION_XML)
       }
       assert(http(GET(rootUrl).accept(APPLICATION_JSON)).entityAsString === """{"hello":"world"}""")
       assert(http(GET(rootUrl).accept(APPLICATION_XML)).entityAsString === """<hello>world</hello>""")
@@ -70,7 +70,7 @@ class HttpServerSpec extends FunSuite {
   }
 
   test("can extract path parameters") {
-    import io.shaka.http.RequestMatching._
+    import io.shaka.http.RequestMatching.URLMatcher
     withHttpServer { (httpServer, rootUrl) =>
       httpServer.handler {
         case GET(url"/tickets/$ticketId?messageContains=$messageContains") =>
