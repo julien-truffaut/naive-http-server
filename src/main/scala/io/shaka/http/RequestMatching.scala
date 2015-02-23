@@ -1,6 +1,6 @@
 package io.shaka.http
 
-import io.shaka.http.HttpHeader.ACCEPT
+import io.shaka.http.HttpHeader.{CONTENT_TYPE, ACCEPT}
 
 object RequestMatching {
   object && {
@@ -13,9 +13,13 @@ object RequestMatching {
       .r
   }
 
-  @deprecated("Only works for exactly 1 accept header value. Instead import RequestOps and use guard condition 'if req.accepts(someContentType)'", "2015-02-04")
   object Accept {
+    @deprecated("Only works for exactly 1 accept header value. Instead import RequestOps and use guard condition 'if req.accepts(someContentType)'", "2015-02-04")
     def unapply(request: Request) = if (request.headers.contains(ACCEPT)) request.headers(ACCEPT).headOption.map(ContentType.contentType) else None
+  }
+
+  object HasContentType{
+    def unapply(request: Request) = if (request.headers.contains(CONTENT_TYPE)) request.headers(CONTENT_TYPE).headOption.map(ContentType.contentType) else None
   }
 
   object Path {
