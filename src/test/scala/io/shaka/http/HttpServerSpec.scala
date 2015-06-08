@@ -3,11 +3,14 @@ package io.shaka.http
 import io.shaka.http.ContentType._
 import io.shaka.http.Http.http
 import io.shaka.http.HttpHeader.{CONTENT_LENGTH, USER_AGENT}
+import io.shaka.http.HttpServer.ToLog
 import io.shaka.http.HttpServerSpecSupport.withHttpServer
 import io.shaka.http.Request.{GET, HEAD, POST}
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import org.scalatest.FunSuite
+
+import scala.collection.mutable
 
 class HttpServerSpec extends FunSuite {
 
@@ -102,6 +105,17 @@ class HttpServerSpec extends FunSuite {
       assert(response.entity === None)
       assert(response.header(CONTENT_LENGTH) === Some("Hello world".length.toString))
     }
+  }
+
+  test("output the port the server has started on") {
+    val loggedMessages = mutable.MutableList[String]()
+    val captureMessage: ToLog = (s) ⇒ loggedMessages += s
+
+    val httpServer = new HttpServer(0, captureMessage).start()
+
+    assert(loggedMessages.exists(m ⇒ m.startsWith(s"naive-http-server started on port ${httpServer.port()}")))
+
+    httpServer.stop()
   }
 }
 
