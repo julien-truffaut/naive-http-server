@@ -27,7 +27,7 @@ class HttpServer(private val usePort:Int = 0, otherLog: ToLog) {
     server.stop(delayInSeconds)
   }
 
-  def port() = server.getAddress.getPort
+  def port = server.getAddress.getPort
 
   def handler(handler: HttpHandler) = {
     server.removeContext("/")
