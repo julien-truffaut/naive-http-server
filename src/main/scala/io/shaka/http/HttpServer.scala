@@ -2,7 +2,7 @@ package io.shaka.http
 
 import java.net.InetSocketAddress
 
-import com.sun.net.httpserver.{HttpServer ⇒ SunHttpServer}
+import com.sun.net.httpserver.{HttpServer => SunHttpServer}
 import io.shaka.http.Http.HttpHandler
 import io.shaka.http.HttpServer.ToLog
 import io.shaka.http.Response.respond
@@ -18,7 +18,7 @@ class HttpServer(private val usePort:Int = 0, otherLog: ToLog) {
     val startedAt = System.nanoTime()
     server.start()
     val elapsedTime = BigDecimal((System.nanoTime() - startedAt) / 1000000.0).formatted("%.2f")
-    otherLog(s"naive-http-server started on port ${port()} in $elapsedTime milli seconds")
+    otherLog(s"naive-http-server started on port $port in $elapsedTime milli seconds")
     this
   }
 
