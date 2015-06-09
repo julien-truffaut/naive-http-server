@@ -113,7 +113,7 @@ class HttpServerSpec extends FunSuite {
 
     val httpServer = new HttpServer(0, captureMessage).start()
 
-    assert(loggedMessages.exists(m ⇒ m.startsWith(s"naive-http-server started on port ${httpServer.port()}")))
+    assert(loggedMessages.exists(m ⇒ m.startsWith(s"naive-http-server started on port ${httpServer.port}")))
 
     httpServer.stop()
   }
